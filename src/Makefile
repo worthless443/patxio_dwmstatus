@@ -2,7 +2,7 @@
 
 include config.mk
 
-all: options dwmstatus_xcb dwmstatus_std
+all: dwmstatus_xcb 
 
 options:
 
@@ -15,14 +15,16 @@ config.h: config.def.h
 	@echo "cp config.def.h -> config.h"
 	cp config.def.h config.h
 
+memused.o: 
+	gcc -c ${CFLAGS} ${MEMPATH}/memused.c 
 dwmstatus.o: dwmstatus.c dwmstatus.h config.h
 	${CC} ${CFLAGS} -c dwmstatus.c
 
 dwmstatus_xcb.o: dwmstatus.o dwmstatus_xcb.c
 	${CC} ${CFLAGS} -c dwmstatus_xcb.c
 
-dwmstatus_xcb: dwmstatus.o dwmstatus_xcb.o
-	${CC} ${CFLAGS} $@.o dwmstatus.o -o $@ ${LIBS}
+dwmstatus_xcb: dwmstatus.o dwmstatus_xcb.o #memused.o
+	${CC} ${CFLAGS} $^ -o $@ ${LIBS}
 
 dwmstatus_std.o: dwmstatus.o dwmstatus_std.c
 	${CC} ${CFLAGS} -c dwmstatus_std.c
