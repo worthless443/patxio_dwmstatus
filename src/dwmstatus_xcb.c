@@ -155,8 +155,6 @@ l2:
 		(void)up_hours;
 		(void)up_minutes;
 
-		printf("%d\n",fuck);
-
 		snprintf(status, sizeof(status),
 			"%0.02fGHz \u2502 %s(%d)GiB \u2502 %s%s \u2502 %s ",
 			cpufreq(), memused,mem_int,ret ? "+" : "-",battery_status, system_time);
@@ -175,10 +173,10 @@ l2:
 		/* update display */
 		xcb_flush(connection);
 
-		/* refresh rate */
+	/* refresh rate */
 		counter += STATUS_REFRESH_RATE_REG;
 
-		if(convt_batt_to_int(battery_status) == 95 && !_notify) {
+		if(convt_batt_to_int(battery_status) == 84 && !_notify) {
 			notify_send("Low Battery");
 			_notify = 1;
 		}
