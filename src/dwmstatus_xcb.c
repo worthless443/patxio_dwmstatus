@@ -52,27 +52,33 @@ void sigabrt_handler()
 	keep_running = 0;
 	exit(1);
 }
-void notify_send(const char *msg) {
-	notify_init("Battery");
-	NotifyNotification* n = notify_notification_new ("Battery",
+
+void _notify_send(const char *msg) {
+	notify_init("battery");
+	NotifyNotification* n = notify_notification_new ("battery",
                                  msg,
                                   0);
 	notify_notification_show(n,0);
+	notify_notification_clear_actions(n);
+	notify_notification_close(n,0);
 	notify_uninit();
 	free(n);
 
+}
+void notify_send(const char *msg) {
+	_notify_send(msg);
 }
 extern int memused_wrapper();
 
 int main()
 {
 	/* format the uptime into minutes */
-	unsigned int up_minutes, up_hours, volume,notify = 0,charge = 0;
+	unsigned int up_minutes, up_hours, volume,_notify = 0,charge = 0;
 	char *battery_status, *system_time;
 	long uptime, alsa_vol_unit;
 	static char status[100];
 	struct sysinfo s_info;
-
+	struct BatSt st;// = malloc(sizeof(struct BatSt));
 	/* display number */
 	int screen_default_nbr;
 	/* connect to display */
@@ -109,8 +115,9 @@ l2:
 		sleep(1);
 		int mem_int;
 		mem_int = memused_wrapper(); // this has to be before bat_parse()
-		struct BatSt st;
 		bat_parse(&st);
+		const int ret = st.ret;
+		const int fuck = st.ret;
 //		if (snd_mixer_wait(alsa_handle, STATUS_REFRESH_RATE_REG * 1000) == 0) {
 //			snd_mixer_handle_events(alsa_handle);
 //			volume = alsa_get_max_vol(alsa_handle) / 100;
@@ -138,25 +145,21 @@ l2:
 
 		char memused[3];// = malloc(100);
 		mem_avil(memused);
-		if(st.ret && !charge) {
-			notify_send("charging");
-			charge = 1;
-		}
-		else if(!st.ret && charge) charge = 0;
-		
+//		if(st.ret && !charge) {
+//			notify_send("charging");
+//			charge = 1;
+//		}
+//		else if(!st.ret && charge) charge = 0;
+//		
 		// not using it, don't need it, please don't emit warnings
 		(void)up_hours;
 		(void)up_minutes;
 
-		if(convt_batt_to_int(battery_status)<10 && !notify) {
-			notify_send("Low Battery");
-			notify = 1;
-		}
-	
+		printf("%d\n",fuck);
 
 		snprintf(status, sizeof(status),
 			"%0.02fGHz \u2502 %s(%d)GiB \u2502 %s%s \u2502 %s ",
-			cpufreq(), memused,mem_int,st.ret ? "+" : "-",battery_status, system_time);
+			cpufreq(), memused,mem_int,ret ? "+" : "-",battery_status, system_time);
 
 		/* changed root window name */
 
@@ -174,6 +177,13 @@ l2:
 
 		/* refresh rate */
 		counter += STATUS_REFRESH_RATE_REG;
+
+		if(convt_batt_to_int(battery_status) == 95 && !_notify) {
+			notify_send("Low Battery");
+			_notify = 1;
+		}
+		//free(st);
+	
 	}
 l1:
 

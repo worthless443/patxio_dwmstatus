@@ -2,7 +2,7 @@
 
 include config.mk
 
-all: dwmstatus_xcb 
+all: getdeps dwmstatus_xcb 
 
 options:
 
@@ -14,7 +14,9 @@ config.h: config.def.h
 
 	@echo "cp config.def.h -> config.h"
 	cp config.def.h config.h
-
+getdeps:
+	make -C ../csysteminfo
+	make -C ../glib_impl
 memused.o: 
 	gcc -c ${CFLAGS} ${MEMPATH}/memused.c 
 dwmstatus.o: dwmstatus.c dwmstatus.h config.h
@@ -37,4 +39,6 @@ install:
 	cp -f dwmstatus_xcb ${PREFIX}/bin/dwmstatus_xcb
 
 clean:
-	rm -f *.o dwmstatus_std dwmstatus_xcb
+	make -C ${MEMPATH} clean
+	make -C ${GIMPL_PATH} clean
+	rm -f *.o dwmstatus_std dwmstatus_xcb 
