@@ -1,6 +1,7 @@
 # Makefile
 
 include config.mk
+export
 
 all: getdeps dwmstatus_xcb 
 
@@ -15,8 +16,8 @@ config.h: config.def.h
 	@echo "cp config.def.h -> config.h"
 	cp config.def.h config.h
 getdeps:
-	make -C ../csysteminfo
 	make -C ../glib_impl
+	make -C ../csysteminfo
 memused.o: 
 	gcc -c ${CFLAGS} ${MEMPATH}/memused.c 
 dwmstatus.o: dwmstatus.c dwmstatus.h config.h

@@ -12,6 +12,6 @@ DEP_XCB = `pkg-config --cflags --libs xcb xcb-atom`
 # output volume support
 DEP_ALSA = `pkg-config --cflags --libs alsa`
 
-LIBS = ${DEP_XCB} ${DEP_ALSA} -lmst -lnotify -lsc -lgimpl
+LIBS = ${DEP_XCB} ${DEP_ALSA} -lmst -lnotify -lgimpl
 
 PREFIX=/usr/local

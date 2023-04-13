@@ -8,7 +8,7 @@
 #include <xcb/xcb.h>
 #include <xcb/xcb_atom.h>
 
-#include <memused.h>
+//#include <memused.h>
 #include <batparse.h>
 #include "dwmstatus.h"
 
