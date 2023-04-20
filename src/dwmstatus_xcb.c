@@ -117,7 +117,6 @@ l2:
 		mem_int = memused_wrapper(); // this has to be before bat_parse()
 		bat_parse(&st);
 		const int ret = st.ret;
-		const int fuck = st.ret;
 //		if (snd_mixer_wait(alsa_handle, STATUS_REFRESH_RATE_REG * 1000) == 0) {
 //			snd_mixer_handle_events(alsa_handle);
 //			volume = alsa_get_max_vol(alsa_handle) / 100;
@@ -156,8 +155,8 @@ l2:
 		(void)up_minutes;
 
 		snprintf(status, sizeof(status),
-			"%0.02fGHz \u2502 %s(%d)GiB \u2502 %s%s \u2502 %s ",
-			cpufreq(), memused,mem_int,ret ? "+" : "-",battery_status, system_time);
+			"%0.02fGHz \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
+			cpufreq(), memused,mem_int,ret ? "+" : "-",st.pert, system_time);
 
 		/* changed root window name */
 
@@ -176,7 +175,7 @@ l2:
 	/* refresh rate */
 		counter += STATUS_REFRESH_RATE_REG;
 
-		if(convt_batt_to_int(battery_status) == 84 && !_notify) {
+		if(st.pert < 10 && !_notify) {
 			notify_send("Low Battery");
 			_notify = 1;
 		}
