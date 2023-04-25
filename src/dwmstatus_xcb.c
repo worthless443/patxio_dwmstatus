@@ -10,6 +10,7 @@
 
 //#include <memused.h>
 #include <batparse.h>
+#include <proc.h>
 #include "dwmstatus.h"
 
 static unsigned char keep_running = 1;
@@ -26,7 +27,7 @@ int topower(int val, int by) {
 int mem_avil(char *used) {
 	struct sysinfo info;
 	if(sysinfo(&info)<0) return -1;
-	sprintf(used,"%ld\n",(info.freeram * info.mem_unit)/topower(10,9));
+	sprintf(used,"%lu",(info.freeram * info.mem_unit)/topower(10,9));
 	//memused();
 	return 0;
 }
@@ -100,22 +101,14 @@ int main()
 
 	/* use a counter to update less important info less often */
 	unsigned int counter = STATUS_REFRESH_RATE_LOW;
-	goto l2;
-	while(1) {
-		int mem_int = memused_wrapper();
-		struct BatSt st;
-		bat_parse(&st);
-		//printf("%d\n", mem_int);
-		sleep(1);
-		break;
-	}
-l2:
-	//goto l1;
+	int sec = 0;
 	while (keep_running) {
 		sleep(1);
 		int mem_int;
 		mem_int = memused_wrapper(); // this has to be before bat_parse()
+		//mem_int = 0; // this has to be before bat_parse()
 		bat_parse(&st);
+
 		const int ret = st.ret;
 //		if (snd_mixer_wait(alsa_handle, STATUS_REFRESH_RATE_REG * 1000) == 0) {
 //			snd_mixer_handle_events(alsa_handle);
@@ -142,7 +135,8 @@ l2:
 		}
 
 
-		char memused[3];// = malloc(100);
+		//char *memused = malloc(sizeof(char)*11);// = malloc(100);
+		char memused[4];
 		mem_avil(memused);
 //		if(st.ret && !charge) {
 //			notify_send("charging");
@@ -153,11 +147,28 @@ l2:
 		// not using it, don't need it, please don't emit warnings
 		(void)up_hours;
 		(void)up_minutes;
-
+//		char *cmd = read_file("ps -a > pscmd","pscmd");
+//		int nl_size =__calc_newline(cmd);
+//		char **lines = split_ps_buffer(cmd);
+//		char **procs = malloc(sizeof(char*)*nl_size);
+//		get_processes_pass(lines,procs,nl_size - 1);	
+//		//char *str = store_process_string(procs,nl_size - 1,7);
+//	
+//		//printf("%d\n",nl_size);
+//		split_buffer_free(lines,nl_size);
+//		char *str = procs[nl_size - 2];
+		char *str = only_process_wrapper_str1();
+		printf("%s\n",str);
 		snprintf(status, sizeof(status),
-			"%0.02fGHz \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
-			cpufreq(), memused,mem_int,ret ? "+" : "-",st.pert, system_time);
+			"\u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
+		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st.pert, system_time);
 
+		//free(str);
+		printf("%d\n",++sec);
+		//proc_free(procs,nl_size - 1);
+		//free(cmd);
+		//free(procs);
+		//free(memused);
 		/* changed root window name */
 
 		xcb_change_property(connection,
@@ -175,15 +186,13 @@ l2:
 	/* refresh rate */
 		counter += STATUS_REFRESH_RATE_REG;
 
-		if(st.pert < 10 && !_notify) {
-			notify_send("Low Battery");
-			_notify = 1;
-		}
+//		if(st.pert < 10 && !_notify) {
+//			notify_send("Low Battery");
+//			_notify = 1;
+//		}
 		//free(st);
 	
 	}
-l1:
-
 	//snd_mixer_close(alsa_handle);
 	/* disconnect from X server */
 	xcb_disconnect(connection);
