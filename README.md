@@ -1,45 +1,36 @@
-# dwmstatus
+# patxio's fork of dwmstatus
 ## Description
-A simple, customizable status bar for Dynamic Window Manager(dwm)
 
-Exports status bar to X11 root window via xcb instead of xlib
+Parsing systeminfo from files and commands' stdout, and hooking it into the root window of X11 via xcb. This status bar is most relavent to laptop users for DWM, and shows you the minimal info about system info. 
 
-Output:
+Minimal Output:
+```cpp
+/* current processs, ram free, charging, time */
+│ vi │ 4(6540)GiB | +100% │ Thu 10/29  4:20
+/* current processs, ram free, discharging, time */
+│ vi │ 4(6540)GiB | -99% │ Thu 10/29  4:20
 ```
-/* charging */
-<---> │ 0.94GHz │ 39°C │ [100%+] │ Vol: 50% │ 1:09 │ Thu 10/29  4:20
-/* discharging */
-<---> │ 0.94GHz │ 39°C │ [99%] │ Vol: 50% │ 1:69 │ Thu 10/29  4:20
-/* AC power */
-<---> │ 0.94GHz │ 39°C │ [0%] │ Vol: 50% │ 1:48 │ Thu 10/29  4:20
-```
-
 ## Requirements
- - c compiler
+ - c compiler (Both GCC and Clang recommanded)
  - [xcb-util](https://xcb.freedesktop.org/) [For exporting status bar to root X11 window]
- - Kernel options:
-   - `CONFIG_SYSFS`: sysfs file system support [Where most information will be parsed from]
-   - `CONFIG_THERMAL_HWMON`: Expose thermal sensors as hwmon device [For getting cpu temps]
+ - submodule [csysteminfo](https://github.com/worthless443/csysteminfo)
+
+## Download
+```bash
+$ git clone -b semiworks https://github.com/worthless443/patxio_dwmstatus.git
+$ cd patxio_dwmstatus
+$ git submodule update --init
+```
 
 ## Installation
 Installation using **make**:
-```
-$ cd dwmstatus/src
+```bash
+$ cd patxio_dwmstatus/src
 $ make
-# make install
 ```
-Alternatively, you can install using **meson**:
-```
-$ cd dwmstatus
-$ meson build
-$ ninja -C build
-# ninja -C build install
-```
-
 ## Running
 ```
-$ dwmstatus_std  # for outputting to stdout
-$ dwmstatus_xcb  # for outputting to X11 root window
+$ ./dwmstatus_xcb  # for outputting to X11 root window
 ```
 
 ## Configuration
@@ -49,7 +40,5 @@ Note: some functions may be commented from my usages.
 Uncomment to use them.
 
 ## Features
- - Displays date, uptime, battery percentage
- - Displays a single cpu's frequency and temperature
- - Displays network connections
-   - only if connected to access point, not internet access
+ - Displays date, uptime, battery percentage, charging info
+ - Displays the most recent process launched from the terminal
