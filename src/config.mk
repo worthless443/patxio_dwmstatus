@@ -3,7 +3,7 @@ CC = gcc
 MEMPATH=../csysteminfo/
 GIMPL_PATH=../glib_impl
 
-NOFLAGS=-Wno-unused-command-line-argument -Wno-format-invalid-specifier
+NOFLAGS=-Wno-unused-command-line-argument -Wno-format-invalid-specifier -Wformat=0
 # flags
 CFLAGS = -ggdb3 -O3 -Wall -Wno-unused-variable -march=native -fno-stack-protector -D_GNU_SOURCE -I./ -I${MEMPATH} -L${MEMPATH} -L${GIMPL_PATH} -I/usr/include/glib-2.0/ -I /usr/lib/glib-2.0/include/ -I/usr/include/gdk-pixbuf-2.0  ${NOFLAGS}
 

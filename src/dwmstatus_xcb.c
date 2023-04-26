@@ -24,12 +24,12 @@ int topower(int val, int by) {
 	return ret;
 }
 
-int mem_avil(char *used) {
+char *mem_avil() {
+	char *used = malloc(sizeof(char)*100);
 	struct sysinfo info;
-	if(sysinfo(&info)<0) return -1;
-	sprintf(used,"%lu",(info.freeram * info.mem_unit)/topower(10,9));
-	//memused();
-	return 0;
+	if(sysinfo(&info)<0) return NULL;
+	sprintf(used,"%04lu",(info.freeram * info.mem_unit)/topower(10,9));
+	return used;
 }
 
 static int convt_batt_to_int(const char *st) {
@@ -84,6 +84,7 @@ int main()
 	int screen_default_nbr;
 	/* connect to display */
 	xcb_connection_t *connection = xcb_connect(NULL, &screen_default_nbr);
+	(void)convt_batt_to_int;
 
 	/* get the screen and the root window */
 	xcb_screen_t *screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
@@ -94,6 +95,8 @@ int main()
 
 	if (screen)
 		root_window = screen->root;
+
+	(void)battery_status;
 
 	//snd_mixer_t *alsa_handle = create_alsa_handle();
 	//alsa_vol_unit = alsa_get_max_vol(alsa_handle) / 100;
@@ -136,8 +139,7 @@ int main()
 
 
 		//char *memused = malloc(sizeof(char)*11);// = malloc(100);
-		char memused[4];
-		mem_avil(memused);
+		char *memused = mem_avil();
 //		if(st.ret && !charge) {
 //			notify_send("charging");
 //			charge = 1;
@@ -165,6 +167,7 @@ int main()
 
 		//free(str);
 		printf("%d\n",++sec);
+		free(memused);
 		//proc_free(procs,nl_size - 1);
 		//free(cmd);
 		//free(procs);
