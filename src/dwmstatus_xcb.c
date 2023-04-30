@@ -19,7 +19,7 @@ static unsigned char keep_running = 1;
  * handles all memory cleanups when program is told to stop
  */
 int topower(int val, int by) {
-	int ret=1;
+	long long unsigned int ret=1;
 	for(int i=0;i<=by;i++) ret*=val;
 	return ret;
 }
@@ -28,7 +28,7 @@ char *mem_avil() {
 	char *used = malloc(sizeof(char)*100);
 	struct sysinfo info;
 	if(sysinfo(&info)<0) return NULL;
-	sprintf(used,"%04lu",(info.freeram * info.mem_unit)/topower(10,9));
+	sprintf(used,"%04lu",(info.freeram * info.mem_unit)/topower(10,8));
 	return used;
 }
 
@@ -165,7 +165,7 @@ int main()
 			"\u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
 		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st.pert, system_time);
 
-		//free(str);
+		free(str);
 		printf("%d\n",++sec);
 		free(memused);
 		//proc_free(procs,nl_size - 1);
