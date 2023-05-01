@@ -16,6 +16,8 @@ jobs:
         run:  sudo apt install libxcb-util-dev
       - name: dependency_3
         run:  sudo apt install libasound2-dev
+      - name: dependency_4
+        run:  sudo apt install libnotify-dev
       - name: submodules 
         run: git submodule update --init 
       - name: build 
