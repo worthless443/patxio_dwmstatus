@@ -13,7 +13,7 @@ jobs:
       - name: dependency_1 
         run:  sudo apt install alsa-tools
       - name: dependency_2
-        run:  sudo apt install xcb-util
+        run:  sudo apt install libxcb-util-dev
       - name: submodules 
         run: git submodule update --init 
       - name: build 
