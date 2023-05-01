@@ -1,0 +1,20 @@
+name: build_ci
+on:
+  push:
+    branches: ["semiworks"]
+  pull_request:
+    branches: ["semiworks"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout 
+        uses: actions/checkout@v2
+      - name: submodules 
+        run: git submodule update --init 
+      - name: build_gimpl
+        run: make -C glib_impl
+      - name: build_st
+        run: make -C csysteminfo
+
+       
