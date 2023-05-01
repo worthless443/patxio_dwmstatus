@@ -1,0 +1,14 @@
+name: build_ci
+on:
+  push:
+    branches: ["semiworks"]
+  jobs:
+    buld:
+      runs-on: ubuntu-latest
+      steps:
+        - names: submodule
+          run: git submodule update --init
+        - names: build 
+          run: cd src && make 
+
+       
