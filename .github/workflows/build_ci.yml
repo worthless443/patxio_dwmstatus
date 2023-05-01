@@ -8,6 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout 
+        uses: actions/checkout@v2
+      - name: submodules 
+        run: git submodule update --init 
       - name: build 
         run: make -C src
 
