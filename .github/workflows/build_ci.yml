@@ -11,9 +11,9 @@ jobs:
       - name: checkout 
         uses: actions/checkout@v2
       - name: dependency_1 
-        run:  apt install alsa-tools
+        run:  sudo apt install alsa-tools
       - name: dependency_2
-        run:  apt install xcb-util
+        run:  sudo apt install xcb-util
       - name: submodules 
         run: git submodule update --init 
       - name: build 
