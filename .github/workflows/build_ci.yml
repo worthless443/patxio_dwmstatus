@@ -15,7 +15,7 @@ jobs:
       - name: dependency_2
         run:  sudo apt install libxcb-util-dev
       - name: dependency_3
-        run:  sudo apt install libasound2
+        run:  sudo apt install libasound2-dev
       - name: submodules 
         run: git submodule update --init 
       - name: build 
