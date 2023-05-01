@@ -8,9 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - names: submodule
+      - name: submodule
         run: git submodule update --init
-      - names: build 
-        run: cd src && make 
+      - name: build 
+        run: make -C src
 
        
