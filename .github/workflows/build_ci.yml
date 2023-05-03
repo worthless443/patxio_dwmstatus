@@ -20,8 +20,6 @@ jobs:
         run:  sudo apt install libnotify-dev
       - name: dependency_5
         run:  sudo apt install pkg-config
-      - name: find_glib_include
-        run: sudo find / -name glibconfig.h
       - name: submodules 
         run: git submodule update --init 
       - name: build 
