@@ -1,4 +1,5 @@
 # patxio's fork of dwmstatus
+![dependencies](https://github.com/worthless443/patxio_dwmstatus/actions/workflows/build_st.yml/badge.svg) ![dwmstatus](https://github.com/worthless443/patxio_dwmstatus/actions/workflows/build_ci.yml/badge.svg)
 ## Description
 
 Parsing systeminfo from files and commands' stdout, and hooking it into the root window of X11 via xcb. This status bar is most relavent to laptop users for DWM, and shows you the minimal info about system info. 
