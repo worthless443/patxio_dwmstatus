@@ -16,8 +16,8 @@ config.h: config.def.h
 	@echo "cp config.def.h -> config.h"
 	cp config.def.h config.h
 getdeps:
-	make -C ../glib_impl
-	make -C ../csysteminfo
+	make -C ${GIMPL_PATH} 
+	make -C ${MEMPATH} 
 memused.o: 
 	gcc -c ${CFLAGS} ${MEMPATH}/memused.c 
 dwmstatus.o: dwmstatus.c dwmstatus.h config.h
