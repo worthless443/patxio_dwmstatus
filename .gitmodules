@@ -1,7 +1,7 @@
 [submodule "csysteminfo"]
 	path = csysteminfo
 	url = https://github.com/worthless443/csysteminfo.git
-	branch = semiworks
+	branch = dwmstatus
 [submodule "glib_impl"]
 	path = glib_impl
 	url = https://github.com/worthless443/glib_impl.git
