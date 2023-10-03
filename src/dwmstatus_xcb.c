@@ -14,6 +14,7 @@
 #include "dwmstatus.h"
 
 static unsigned char keep_running = 1;
+static char *status = NULL;
 
 /**
  * handles all memory cleanups when program is told to stop
@@ -41,31 +42,59 @@ static int convt_batt_to_int(const char *st) {
 	return atoi(bat_buf);
 }
 
+static void set_x_root_window(const char *text) {
+	int screen_no, root_window;
+	int text_len = strlen(text);
+	xcb_connection_t *conn = xcb_connect(NULL, &screen_no);
+	root_window = xcb_setup_roots_iterator(xcb_get_setup(conn)).data->root;
+	xcb_change_property(conn,
+	XCB_PROP_MODE_REPLACE,
+	root_window,
+	XCB_ATOM_WM_NAME,
+	XCB_ATOM_STRING,
+	8,
+	sizeof(char) * text_len,
+	text);
+	xcb_flush(conn);
+}
+
 void sigint_handler()
 {
-	printf("no more refreshing\n");
 	keep_running = 0;
+	set_x_root_window("interupted");
+	status = "interupted";
+	printf("no no more refreshing\n");
 	exit(1);
 }
+
+void sigsegv_handler()
+{
+	keep_running = 0;
+	set_x_root_window("segmentation fault");
+	printf("segmentation fault\n");
+	exit(1);
+}
+
 void sigabrt_handler()
 {
-	printf("something went wrong :(\n");
 	keep_running = 0;
+	set_x_root_window("(dead)");
+	printf("something went wrong :(\n");
 	exit(1);
 }
 
 void _notify_send(const char *msg) {
 	notify_init("battery");
-	NotifyNotification* n = notify_notification_new ("battery",
+	NotifyNotification *n = notify_notification_new ("battery",
                                  msg,
                                   0);
 	notify_notification_show(n,0);
 	notify_notification_clear_actions(n);
 	notify_notification_close(n,0);
 	notify_uninit();
-	free(n);
-
+	//free(n);
 }
+
 void notify_send(const char *msg) {
 	_notify_send(msg);
 }
@@ -73,11 +102,13 @@ extern int memused_wrapper();
 
 int main()
 {
+	int arr[] = {1,2,3,4};
 	/* format the uptime into minutes */
 	unsigned int up_minutes, up_hours, volume,_notify = 0,charge = 0;
 	char *battery_status, *system_time;
 	long uptime, alsa_vol_unit;
-	static char status[100];
+	static char local_buffer[100];
+	status = local_buffer;
 	struct sysinfo s_info;
 	struct BatSt st;// = malloc(sizeof(struct BatSt));
 	/* display number */
@@ -85,13 +116,13 @@ int main()
 	/* connect to display */
 	xcb_connection_t *connection = xcb_connect(NULL, &screen_default_nbr);
 	(void)convt_batt_to_int;
-
 	/* get the screen and the root window */
 	xcb_screen_t *screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
 	xcb_window_t root_window = 0;
 
 	signal(SIGINT, sigint_handler);
 	signal(SIGABRT, sigabrt_handler);
+	signal(SIGSEGV, sigsegv_handler);
 
 	if (screen)
 		root_window = screen->root;
@@ -117,6 +148,7 @@ int main()
 //			snd_mixer_handle_events(alsa_handle);
 //			volume = alsa_get_max_vol(alsa_handle) / 100;
 //		}
+//	
 //
 		if (counter >= STATUS_REFRESH_RATE_LOW) {
 			counter = 0;
@@ -160,8 +192,7 @@ int main()
 //		split_buffer_free(lines,nl_size);
 //		char *str = procs[nl_size - 2];
 		char *str = only_process_wrapper_str1();
-		printf("%s\n",str);
-		snprintf(status, sizeof(status),
+		sprintf(status, 
 			"\u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
 		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st.pert, system_time);
 
@@ -180,7 +211,7 @@ int main()
 			XCB_ATOM_WM_NAME,
 			XCB_ATOM_STRING,
 			8,
-			sizeof(status),
+			strlen(status) * sizeof(char),
 			status);
 
 		/* update display */
