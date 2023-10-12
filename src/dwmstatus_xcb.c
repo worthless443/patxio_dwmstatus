@@ -110,7 +110,7 @@ int main()
 	static char local_buffer[100];
 	status = local_buffer;
 	struct sysinfo s_info;
-	struct BatSt st;// = malloc(sizeof(struct BatSt));
+	struct BatSt *st = malloc(sizeof(struct BatSt));
 	/* display number */
 	int screen_default_nbr;
 	/* connect to display */
@@ -141,9 +141,9 @@ int main()
 		int mem_int;
 		mem_int = memused_wrapper(); // this has to be before bat_parse()
 		//mem_int = 0; // this has to be before bat_parse()
-		bat_parse(&st);
+		bat_parse(st);
 
-		const int ret = st.ret;
+		const int ret = st->ret;
 //		if (snd_mixer_wait(alsa_handle, STATUS_REFRESH_RATE_REG * 1000) == 0) {
 //			snd_mixer_handle_events(alsa_handle);
 //			volume = alsa_get_max_vol(alsa_handle) / 100;
@@ -194,11 +194,12 @@ int main()
 		char *str = only_process_wrapper_str1();
 		sprintf(status, 
 			"\u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
-		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st.pert, system_time);
+		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st->pert, system_time);
 
 		free(str);
 		printf("%d\n",++sec);
 		free(memused);
+		//free(st);
 		//proc_free(procs,nl_size - 1);
 		//free(cmd);
 		//free(procs);
