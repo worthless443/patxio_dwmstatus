@@ -99,6 +99,7 @@ void notify_send(const char *msg) {
 	_notify_send(msg);
 }
 extern int memused_wrapper();
+extern char *parse_by_key(char*);
 
 int main()
 {
@@ -143,7 +144,7 @@ int main()
 		//mem_int = 0; // this has to be before bat_parse()
 		bat_parse(st);
 
-		const int ret = st->ret;
+		const int ret = (0 == strcmp(parse_by_key("state"), "charging"));
 //		if (snd_mixer_wait(alsa_handle, STATUS_REFRESH_RATE_REG * 1000) == 0) {
 //			snd_mixer_handle_events(alsa_handle);
 //			volume = alsa_get_max_vol(alsa_handle) / 100;
@@ -193,7 +194,7 @@ int main()
 //		char *str = procs[nl_size - 2];
 		char *str = only_process_wrapper_str1();
 		sprintf(status, 
-			"\u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
+			"\u2502 \U0001f498 \u2502 %s \u2502 %s(%d)GiB \u2502 %s%d\% \u2502 %s ",
 		strlen(str) < 50 ? (strlen(str) == 0 ? "<None>" :str) : "<bugged>", memused,mem_int,ret ? "+" : "-",st->pert, system_time);
 
 		free(str);
